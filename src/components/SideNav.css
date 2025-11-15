@@ -1,0 +1,74 @@
+/* SideNav styles - professional, compact, and responsive */
+.sidenav {
+    background: linear-gradient(180deg, #ffffff, var(--brand-light));
+    border: 1px solid rgba(37,99,235,0.06);
+    padding: 12px;
+    height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidenav ul {
+    list-style: none; /* remove dots */
+    padding: 6px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidenav li { margin: 0 }
+
+.sidenav button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    text-align: left;
+    color: var(--brand-dark);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 150ms ease, transform 120ms ease, box-shadow 150ms ease;
+}
+
+.sidenav button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(90deg, rgba(37,99,235,0.04), rgba(96,165,250,0.02));
+}
+
+.sidenav button:focus { outline: none; box-shadow: 0 6px 18px rgba(37,99,235,0.06); }
+
+.sidenav button.active {
+    background: linear-gradient(90deg, rgba(37,99,235,0.10), rgba(99,102,241,0.06));
+    color: var(--brand-blue);
+    box-shadow: inset 0 0 0 1px rgba(99,102,241,0.04);
+}
+
+.sidenav .sidenav-count {
+    background: var(--brand-blue);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+/* Compact caption under nav (optional) */
+.sidenav .nav-footer {
+    margin-top: auto;
+    font-size: 12px;
+    color: #64748b;
+    padding: 8px 12px;
+}
+
+@media (max-width: 1000px) {
+    .sidenav { height: auto; width: 100%; display: none }
+}

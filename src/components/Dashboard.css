@@ -1,0 +1,43 @@
+/* Dashboard-specific styles */
+.summary-card { background: linear-gradient(90deg, #ffffff, var(--brand-light)); border:1px solid rgba(37,99,235,0.06) }
+.stat-value { color: var(--brand-blue) }
+.stat { box-shadow: 0 6px 18px rgba(37,99,235,0.05) }
+
+.topnav-wrapper{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    /* margin-right:1000px; */
+}
+
+.app-shell { display: flex; min-height: calc(100vh - 64px); align-items:flex-start;
+    padding-top: 53px;  padding-bottom:24px; 
+
+}
+.dashboard-container { width: 100%;  margin: 0 auto }
+.sidenav-wrapper{
+    /* margin-top: 53px; */
+    position:fixed;
+}
+/* .Welcomedashboard{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content: center;
+} */
+/* layout helpers used in dashboard */
+.sidenav { width: 220px }
+.summary-card { padding: 18px }
+.stat { min-width: 120px; padding: 18px; border-radius: 10px; background: linear-gradient(90deg,#fbfdff,#f7f7ff); text-align:center }
+.stat-value { font-size: 28px; font-weight: 800 }
+.stat-label { color: #64748b; font-size: 13px }
+
+@media (max-width: 1000px) {
+    .app-shell { flex-direction: column; padding:12px }
+    .sidenav { display: none }
+}
+
+.main-content { 
+margin-left: 240px; 
+
+}

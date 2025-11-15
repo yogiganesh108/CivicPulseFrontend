@@ -1,0 +1,36 @@
+.modal-overlay{position:fixed;inset:0;background:linear-gradient(rgba(2,6,23,0.45), rgba(2,6,23,0.45));display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal{background:#ffffff;padding:18px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 18px 50px rgba(2,6,23,0.16);border:1px solid rgba(15,23,42,0.04);display:flex;flex-direction:column;max-height:85vh;overflow:hidden}
+/* reuse existing .btn-primary/.btn-muted from AdminDashboard.css */
+
+/* ensure complaint grid spacing in officer area */
+.officer-dashboard .complaint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.modal textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #e6eefb;background: #fbfdff;resize:vertical;min-height:110px;font-size:14px}
+.modal input[type=file]{margin-top:8px}
+
+/* make the form body scrollable while keeping header/footer visible */
+.modal .form-body{overflow-y:auto;padding-right:8px;margin-bottom:10px;/* vertical scroll */max-height:calc(85vh - 160px)}
+.modal .form-section{margin-bottom:12px}
+.modal .form-row{display:flex;gap:12px;align-items:center}
+.modal .form-row .col{flex:1}
+.modal .preview{margin-top:8px}
+.modal .preview img{max-width:100%;border-radius:8px;border:1px solid #eef6ff}
+.modal .modal-footer{display:flex;justify-content:flex-end;gap:10px;padding-top:8px;border-top:1px solid rgba(15,23,42,0.03)}
+.modal .modal-title{font-size:18px;margin:0 0 8px 0;color:#0f172a}
+.modal label{display:block;margin-bottom:6px;color:#334155;font-weight:600}
+.modal .hint{font-size:13px;color:#64748b;margin-top:6px}
+.modal .btn-primary{background:linear-gradient(90deg,#0b69ff,#3b82f6);border:none;color:#fff;padding:10px 14px;border-radius:10px}
+.modal .btn-muted{background:#f1f5f9;border:1px solid rgba(15,23,42,0.03);padding:8px 12px;border-radius:10px}
+.modal .btn-primary[disabled],.modal .btn-muted[disabled]{opacity:0.6;cursor:not-allowed}
+
+/* resolved form specific */
+.modal h4{margin-top:0;margin-bottom:6px}
+.modal .subtitle{font-size:13px;color:#475569;margin-bottom:10px}
+.modal .btn-primary{min-width:140px}
+.complaint-actions button[disabled]{opacity:0.6;cursor:not-allowed}
+
+/* Responsive tweaks */
+@media (max-width:720px){
+	.modal{max-width:100%;padding:14px}
+	.modal .form-row{flex-direction:column;align-items:stretch}
+	.modal .modal-footer{flex-direction:column-reverse;gap:8px}
+}
