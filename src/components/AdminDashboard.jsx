@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import TopNav from "./TopNav";
+import ComplaintDetail from './ComplaintDetail';
 import api from "../utils/api";
 import "./AdminDashboard.css";
 import {
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
     deadline: "",
   });
   const [debugInfo, setDebugInfo] = useState(null);
+  const [selectedComplaintId, setSelectedComplaintId] = useState(null);
 
   const blobUrlsRef = useRef([]);
   const [, setTick] = useState(0);
@@ -135,6 +137,14 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function resolveOfficerName(c) {
+    const found = officers.find(o => String(o.id) === String(c.officerId));
+    if (found) return found.name;
+    if (c.officerName) return c.officerName;
+    if (c.officer && c.officer.name) return c.officer.name;
+    return c.officerId ? `Officer #${c.officerId}` : '-';
   }
 
   // cleanup blobs on unmount
@@ -501,160 +511,54 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Complaint Grid */}
-              <div className="complaint-grid">
-                {complaints
-                  .filter(
-                    (c) =>
-                      (categoryFilter === "All" ||
-                        c.category === categoryFilter) &&
-                      (priorityFilter === "All" ||
-                        (c.priority || "") === priorityFilter) &&
-                      (statusFilter === "All" ||
-                        (c.status || "") === statusFilter) &&
-                      (officerFilter === "All" ||
-                        (officerFilter === "Unassigned" && !c.officerId) ||
-                        (officerFilter !== "All" &&
-                          officerFilter !== "Unassigned" &&
-                          String(c.officerId) === String(officerFilter)))
-                  )
-                  .map((c) => (
-                    <div className="complaint-card" key={c.id}>
-                      <div className="complaint-media">
-                        {c.imageBlobUrl ? (
-                          <img
-                            src={c.imageBlobUrl}
-                            alt={c.title}
-                            className="complaint-image"
-                          />
-                        ) : c.imageUrl ? (
-                          <img
-                            src={c.imageUrl}
-                            alt={c.title}
-                            className="complaint-image"
-                            crossOrigin="anonymous"
-                            onError={() =>
-                              fetchImageBlobForComplaint(c.id, c.imageUrl)
-                            }
-                          />
-                        ) : (
-                          <div className="complaint-image placeholder">
-                            No image
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="complaint-body">
-                        <div className="complaint-header">
-                          <h4 className="complaint-title">{c.title}</h4>
-                          <div
-                            className={`status-badge status-${(
-                              c.status || ""
-                            ).toLowerCase()}`}
-                          >
-                            {c.status}
-                          </div>
-                        </div>
-
-                        <div className="complaint-meta">
-                          {c.category} • Priority: {c.priority || "—"}
-                        </div>
-                        <div className="complaint-desc">
-                          {c.description || ""}
-                        </div>
-
-                        <div className="complaint-footer">
-                          <div className="assigned">
-                            Officer:{" "}
-                            {(() => {
-                              const found = officers.find(
-                                (o) => String(o.id) === String(c.officerId)
-                              );
-                              return found
-                                ? found.name
-                                : c.officerId
-                                ? c.officerId
-                                : "-";
-                            })()}
-                          </div>
-                          <div className="deadline">
-                            Deadline: {c.deadline || "-"}
-                          </div>
-                        </div>
-
-                        <div className="complaint-actions">
-                          {assigningId === c.id ? (
-                            <div className="assign-panel">
-                              <form
-                                onSubmit={submitAssign}
-                                className="assign-form"
-                              >
-                                <select
-                                  required
-                                  value={assignData.officer_id}
-                                  onChange={(e) =>
-                                    setAssignData({
-                                      ...assignData,
-                                      officer_id: e.target.value,
-                                    })
-                                  }
-                                >
-                                  <option value="">Select officer</option>
-                                  {officers.map((o) => (
-                                    <option key={o.id} value={o.id}>
-                                      {o.name} ({o.email})
-                                    </option>
-                                  ))}
-                                </select>
-                                <select
-                                  value={assignData.priority}
-                                  onChange={(e) =>
-                                    setAssignData({
-                                      ...assignData,
-                                      priority: e.target.value,
-                                    })
-                                  }
-                                >
-                                  <option>Low</option>
-                                  <option>Medium</option>
-                                  <option>High</option>
-                                </select>
-                                <input
-                                  type="date"
-                                  value={assignData.deadline}
-                                  onChange={(e) =>
-                                    setAssignData({
-                                      ...assignData,
-                                      deadline: e.target.value,
-                                    })
-                                  }
-                                />
-                                <div className="assign-actions">
-                                  <button type="submit" className="btn-primary">
-                                    Save
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn-muted"
-                                    onClick={() => setAssigningId(null)}
-                                  >
-                                    Cancel
-                                  </button>
+              {/* Complaint List (click an item to view details) */}
+              <div>
+                {selectedComplaintId ? (
+                  <div>
+                    <ComplaintDetail
+                      id={selectedComplaintId}
+                      onClose={() => { setSelectedComplaintId(null); loadComplaints(); }}
+                      officers={officers}
+                      onAssigned={() => { setSelectedComplaintId(null); loadComplaints(); }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <ul className="complaint-list">
+                      {complaints
+                        .filter(
+                          (c) =>
+                            (categoryFilter === "All" || c.category === categoryFilter) &&
+                            (priorityFilter === "All" || (c.priority || "") === priorityFilter) &&
+                            (statusFilter === "All" || (c.status || "") === statusFilter) &&
+                            (officerFilter === "All" || (officerFilter === "Unassigned" && !c.officerId) || (officerFilter !== "All" && officerFilter !== "Unassigned" && String(c.officerId) === String(officerFilter)))
+                        )
+                        .map((c) => (
+                          <li key={c.id} className="complaint-list-item" onClick={() => setSelectedComplaintId(c.id)}>
+                                <div className="thumb-small">
+                                  {c.resolutionImageBlobUrl ? (
+                                    <img src={c.resolutionImageBlobUrl} alt={c.title} />
+                                  ) : c.imageBlobUrl ? (
+                                    <img src={c.imageBlobUrl} alt={c.title} />
+                                  ) : c.imageUrl ? (
+                                    <img src={c.imageUrl} alt={c.title} crossOrigin="anonymous" />
+                                  ) : (
+                                    <div style={{ color: '#94a3b8', fontSize: 13 }}>No image</div>
+                                  )}
                                 </div>
-                              </form>
-                            </div>
-                          ) : (
-                            <button
-                              className="btn-primary"
-                              onClick={() => openAssign(c.id)}
-                            >
-                              Assign
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+
+                                <div className="list-body">
+                                  <div className="list-title">{c.title}</div>
+                                  <div className="list-meta">{c.category} • Priority: {c.priority || '—'}</div>
+                                  <div className="list-sub">{(c.description || '').length > 140 ? (c.description.slice(0, 140) + '…') : c.description}</div>
+                                  <div className="list-sub" style={{ marginTop: 6, color: '#64748b' }}>Officer: {resolveOfficerName(c)} • Deadline: {c.deadline || '-'}</div>
+                                </div>
+                                <div className={`list-status list-status-${(c.status||'').toLowerCase()}`}>{c.status}</div>
+                              </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           )}

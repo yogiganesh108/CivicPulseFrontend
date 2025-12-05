@@ -98,3 +98,21 @@
 .chart-card.wide {
   grid-column: span 2;
 }
+
+/* Complaint list styles (compact rows) */
+.complaint-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px }
+.complaint-list-item { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:8px; border:1px solid #eef2ff; cursor:pointer }
+.complaint-list-item:hover { box-shadow:0 10px 24px rgba(2,6,23,0.06); transform: translateY(-2px); transition: all 160ms ease }
+.thumb-small { width:72px; height:72px; flex-shrink:0; overflow:hidden; border-radius:8px; background:#f8fafc; display:flex; align-items:center; justify-content:center }
+.thumb-small img { width:100%; height:100%; object-fit:cover; display:block }
+.list-body { flex:1; min-width:0 }
+.list-title { font-weight:700; font-size:15px; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.list-meta { color:#64748b; font-size:13px }
+.list-sub { color:#475569; font-size:13px; margin-top:6px; display:block; max-width:56ch; overflow:hidden; text-overflow:ellipsis }
+.list-status { font-weight:700; padding:6px 8px; border-radius:6px }
+.list-status-pending { background:#fef3c7; color:#92400e }
+.list-status-assigned { background:#fef9c3; color:#92400e }
+.list-status-in_progress { background:#bfdbfe; color:#08306b }
+.list-status-resolved { background:#d1fae5; color:#065f46 }
+.list-actions { display:flex; flex-direction:column; gap:8px; align-items:flex-end }
+.resolution-image { width:160px; border-radius:6px }

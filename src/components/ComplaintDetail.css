@@ -1,0 +1,253 @@
+/* Card Wrapper */
+.cd-card {
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  margin: 10px auto;
+  max-width: 1200px;
+}
+
+.error {
+  color: red;
+}
+
+/* Back Button */
+.cd-back-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+/* Main Grid Layout */
+.cd-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  margin-top: 10px;
+}
+
+/* Image Section */
+.cd-media img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.cd-placeholder {
+  height: 340px;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  color: #475569;
+  font-size: 14px;
+}
+
+/* Text Section */
+.cd-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.cd-meta {
+  margin-top: 6px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.cd-description {
+  margin-top: 16px;
+  font-size: 15px;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* Assignment Panel */
+.cd-section {
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 18px;
+}
+
+.cd-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 17px;
+  color: #1e293b;
+}
+
+.cd-assign-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cd-assign-form select,
+.cd-assign-form input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background: #e2e8f0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Officer Actions */
+.cd-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Resolution Box */
+.cd-resolution-box {
+  margin-top: 20px;
+}
+
+.cd-resolution-box img {
+  max-width: 520px;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+
+/* When resolution box is inside the left media column make it fit that column */
+.cd-media .cd-resolution-box {
+  margin-top: 12px;
+}
+.cd-media .cd-resolution-box img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.cd-resolution-note {
+  margin-top: 8px;
+  color: #0f172a;
+}
+
+/* Feedback Section */
+.cd-feedback {
+  margin-top: 20px;
+}
+
+/* Separator between top content and lower sections */
+.cd-separator {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(14,165,233,0.06), rgba(99,102,241,0.02));
+  margin: 20px 0;
+  border-radius: 2px;
+}
+
+.cd-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Reopen button styling (citizen) */
+.cd-reopen-btn {
+  padding: 8px 14px;
+  background: #ffffff;
+  color: #0b69ff;
+  border: 1px solid #e6eefc;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.cd-reopen-btn:hover {
+  background: #f1f9ff;
+}
+.cd-reopen-btn:active { transform: translateY(1px); }
+
+.cd-hint {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Modal Styling */
+.cd-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.cd-modal {
+  background: white;
+  width: 420px;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+  /* allow modal content to scroll when tall */
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.cd-modal h3 {
+  margin: 0 0 12px;
+}
+
+.cd-modal textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px;
+  resize: none;
+  margin-bottom: 10px;
+}
+
+.cd-modal form { display: flex; flex-direction: column; gap: 10px }
+
+.cd-modal .cd-preview { max-height: 40vh; object-fit: contain }
+
+.cd-preview {
+  margin-top: 10px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.cd-modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .cd-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cd-media img,
+  .cd-placeholder {
+    height: 260px;
+  }
+}

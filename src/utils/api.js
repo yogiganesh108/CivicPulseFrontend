@@ -154,6 +154,35 @@ const API = {
       return res.json()
     }
 
+    ,async getComplaint(id){
+      const token = localStorage.getItem('jwt')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch(`${this.base}/api/complaints/${id}`, { headers })
+      if(!res.ok){
+        let err = `Request failed (${res.status})`
+        try{ const body = await res.json(); if(body && body.error) err = body.error }catch(e){}
+        throw new Error(err)
+      }
+      const obj = await res.json()
+      if(obj && obj.imageUrl && obj.imageUrl.startsWith('/')) obj.imageUrl = this.base + obj.imageUrl
+      if(obj && obj.resolutionImageUrl && obj.resolutionImageUrl.startsWith('/')) obj.resolutionImageUrl = this.base + obj.resolutionImageUrl
+      // fetch protected images as blob URLs if token present
+      if(token){
+        try{
+          if(obj.imageUrl){
+            const r = await fetch(obj.imageUrl, { headers }); if(r.ok){ const b = await r.blob(); obj.imageBlobUrl = URL.createObjectURL(b) }
+          }
+          if(obj.resolutionImageUrl){
+            const r2 = await fetch(obj.resolutionImageUrl, { headers }); if(r2.ok){ const b2 = await r2.blob(); obj.resolutionImageBlobUrl = URL.createObjectURL(b2) }
+          }
+          if(obj.reopenImageUrl){
+            const r3 = await fetch(obj.reopenImageUrl, { headers }); if(r3.ok){ const b3 = await r3.blob(); obj.reopenImageBlobUrl = URL.createObjectURL(b3) }
+          }
+        }catch(e){ /* ignore image fetch errors */ }
+      }
+      return obj
+    }
+
     ,async whoami(){
       const token = localStorage.getItem('jwt')
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
@@ -191,6 +220,66 @@ const API = {
         }
         return res.json()
       }
+    }
+
+    ,async updateComplaintImage(id, imageFile){
+      const token = localStorage.getItem('jwt')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const fd = new FormData()
+      fd.append('image', imageFile)
+      const res = await fetch(`${this.base}/api/grievances/${id}/image`, { method: 'PUT', headers, body: fd })
+      if(!res.ok){
+        let err = 'Update image failed'
+        try{ const b = await res.json(); if(b && b.error) err = b.error }catch(e){}
+        throw new Error(err)
+      }
+      return res.json()
+    }
+
+    ,async updateReopenEvidence(id, { imageFile, note }){
+      const token = localStorage.getItem('jwt')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const fd = new FormData()
+      if(imageFile) fd.append('image', imageFile)
+      if(note) fd.append('note', note)
+      const res = await fetch(`${this.base}/api/grievances/${id}/reopen`, { method: 'PUT', headers, body: fd })
+      if(!res.ok){
+        let err = 'Update reopen evidence failed'
+        try{ const b = await res.json(); if(b && b.error) err = b.error }catch(e){}
+        throw new Error(err)
+      }
+      return res.json()
+    }
+
+    ,async submitFeedback({ grievanceId, rating, comments }){
+      const token = localStorage.getItem('jwt')
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
+      const res = await fetch(`${this.base}/api/feedback`, { method: 'POST', headers, body: JSON.stringify({ grievanceId, rating, comments }) })
+      if(!res.ok){
+        let err = 'Submit feedback failed'
+        try{ const b = await res.json(); if(b && b.error) err = b.error }catch(e){}
+        throw new Error(err)
+      }
+      return res.json()
+    }
+
+    ,async getFeedbackForComplaint(grievanceId){
+      const token = localStorage.getItem('jwt')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch(`${this.base}/api/feedback/complaint/${grievanceId}`, { headers })
+      if(!res.ok) return []
+      return res.json()
+    }
+
+    ,async getAllFeedback(){
+      const token = localStorage.getItem('jwt')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch(`${this.base}/api/feedback`, { headers })
+      if(!res.ok) return []
+      return res.json()
     }
 }
 

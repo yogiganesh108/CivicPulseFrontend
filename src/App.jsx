@@ -5,6 +5,7 @@ import Register from './components/Register'
 import Dashboard from './components/Dashboard'
 import AdminDashboard from './components/AdminDashboard'
 import OfficerDashboard from './components/OfficerDashboard'
+import ComplaintDetail from './components/ComplaintDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function AppRouter() {
@@ -16,6 +17,7 @@ function AppRouter() {
   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
   <Route path="/admin" element={<ProtectedRoute allowedRoles={["ADMIN","ROLE_ADMIN"]}><AdminDashboard /></ProtectedRoute>} />
   <Route path="/officer" element={<ProtectedRoute allowedRoles={["OFFICER","ROLE_OFFICER"]}><OfficerDashboard /></ProtectedRoute>} />
+  <Route path="/complaint/:id" element={<ProtectedRoute><ComplaintDetail /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

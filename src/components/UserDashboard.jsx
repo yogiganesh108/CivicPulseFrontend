@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import api from '../utils/api'
+import ComplaintDetail from './ComplaintDetail'
+import FeedbackForm from './FeedbackForm'
+import FeedbackList from './FeedbackList'
+import StarRating from './StarRating'
 import './UserDashboard.css'
 // reuse admin card styles so user complaints look the same
 // import './AdminDashboard.css'
@@ -19,6 +23,8 @@ export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [complaints, setComplaints] = useState([])
+  const [officers, setOfficers] = useState([])
+  const [selectedComplaintId, setSelectedComplaintId] = useState(null)
 
   useEffect(()=>{ if(view === 'my') loadComplaints() }, [view])
 
@@ -32,7 +38,22 @@ export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }
     try{
       const list = await api.getMyGrievances()
       setComplaints(list || [])
+      try{
+        const of = await api.getOfficers()
+        if(Array.isArray(of)) setOfficers(of)
+      }catch(e){ /* ignore if endpoint restricted */ }
     }catch(e){ console.error(e) }
+  }
+
+  function resolveOfficerName(c){
+    // prefer pre-fetched officers list
+    const found = officers.find(o => String(o.id) === String(c.officerId));
+    if(found) return found.name;
+    // try common payload shapes
+    if(c.officerName) return c.officerName;
+    if(c.officer && c.officer.name) return c.officer.name;
+    // fallback: don't show raw numeric id; show placeholder
+    return c.officerId ? `Officer #${c.officerId}` : '-';
   }
 
   async function submit(e){
@@ -105,33 +126,44 @@ export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }
           {complaints.length === 0 ? (
             <div className="muted">No complaints yet</div>
           ) : (
-            <div className="complaint-grid">
-              {complaints.map(c => (
-                <div key={c.id} className="complaint-card">
-                  <div className="complaint-media">
-                    {c.imageBlobUrl ? (
-                      <img src={c.imageBlobUrl} alt={c.title} className="complaint-image" />
-                    ) : c.imageUrl ? (
-                      <img src={c.imageUrl} alt={c.title} className="complaint-image" crossOrigin="anonymous" />
-                    ) : (
-                      <div className="complaint-image placeholder">No image</div>
-                    )}
-                  </div>
-                  <div className="complaint-body">
-                    <div className="complaint-header">
-                      <h4 className="complaint-title">{c.title}</h4>
-                      <div className={`status-badge status-${(c.status||'').toLowerCase()}`}>{c.status}</div>
-                    </div>
-                    <div className="complaint-meta">{c.category} • {c.priority || '—'}</div>
-                    <div className="complaint-desc">{c.description || ''}</div>
-                    <div className="complaint-footer">
-                      <div className="assigned">Officer: {c.officerId || '-'}</div>
-                      <div className="deadline">Deadline: {c.deadline || '-'}</div>
-                    </div>
-                  </div>
+            <>
+              {selectedComplaintId ? (
+                <div>
+                  <ComplaintDetail id={selectedComplaintId} officers={officers} onClose={() => setSelectedComplaintId(null)} />
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div>
+                  <ul className="complaint-list">
+                    {complaints.map(c => (
+                      <li key={c.id} className="complaint-list-item" onClick={() => setSelectedComplaintId(c.id)}>
+                        <div className="thumb-small">
+                          {c.resolutionImageBlobUrl ? (
+                            <img src={c.resolutionImageBlobUrl} alt={c.title} />
+                          ) : c.imageBlobUrl ? (
+                            <img src={c.imageBlobUrl} alt={c.title} />
+                          ) : c.imageUrl ? (
+                            <img src={c.imageUrl} alt={c.title} crossOrigin="anonymous" />
+                          ) : (
+                            <div style={{ color: '#94a3b8', fontSize: 13 }}>No image</div>
+                          )}
+                        </div>
+
+                        <div className="list-body">
+                          <div className="list-title">{c.title}</div>
+                          <div className="list-meta">{c.category} • {c.priority || '—'}</div>
+                          <div className="list-sub">{(c.description || '').length > 140 ? (c.description.slice(0, 140) + '…') : c.description}</div>
+                          <div className="list-sub" style={{ marginTop: 6, color: '#64748b' }}>
+                            Officer: {resolveOfficerName(c)} • Deadline: {c.deadline || '-'}
+                          </div>
+                        </div>
+
+                        <div className={`list-status list-status-${(c.status||'').toLowerCase()}`}>{c.status}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
