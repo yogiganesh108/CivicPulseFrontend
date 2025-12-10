@@ -57,6 +57,50 @@
 
 .helper-row { display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:0.875rem; color:#64748b }
 
+.otp-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.otp-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.otp-modal__content {
+  position: relative;
+  width: 360px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.15);
+  z-index: 1000;
+}
+
+.otp-modal__content h3 { margin-top: 0; margin-bottom: 10px; }
+.otp-modal__content p { margin-top: 0; color: #475569; font-size: 0.95rem; }
+.otp-modal__content form { margin-top: 10px; }
+.otp-modal__content input {
+  width: 100%;
+  font-size: 1.1rem;
+  letter-spacing: 0.2rem;
+  text-align: center;
+}
+
+.otp-actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+.otp-actions button:first-of-type { width: auto; background: #e2e8f0; color: #0f172a; }
+
+.otp-actions button:first-of-type:disabled,
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
   .form-card { width: 94%; padding: 18px; }
 }

@@ -44,6 +44,7 @@ export default function AdminDashboard() {
   });
   const [debugInfo, setDebugInfo] = useState(null);
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
+  const [exporting, setExporting] = useState(false);
 
   const blobUrlsRef = useRef([]);
   const [, setTick] = useState(0);
@@ -213,6 +214,26 @@ export default function AdminDashboard() {
     }
   }
 
+  async function downloadExcel() {
+    setExporting(true);
+    try {
+      const blob = await api.exportGrievances();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const stamp = new Date().toISOString().split("T")[0];
+      link.download = `grievances-${stamp}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Export failed: " + err.message);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   // ===================== RECHARTS DATA =====================
   const COLORS = [
     "#0ea5e9",
@@ -319,6 +340,22 @@ export default function AdminDashboard() {
                 Manage complaints and officers
               </div>
             </div>
+            <button
+              className="export-btn"
+              onClick={downloadExcel}
+              disabled={exporting}
+              style={{
+                background: exporting ? "#94a3b8" : "#0f172a",
+                color: "white",
+                border: "none",
+                padding: "10px 16px",
+                borderRadius: 8,
+                cursor: exporting ? "not-allowed" : "pointer",
+                fontWeight: 600,
+              }}
+            >
+              {exporting ? "Preparing..." : "Download Excel"}
+            </button>
           </div>
 
           {/* ---------- DASHBOARD TAB ---------- */}

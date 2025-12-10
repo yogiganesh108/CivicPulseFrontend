@@ -1,5 +1,5 @@
 const API = {
-  base: 'http://localhost:30081',
+  base: 'http://localhost:8081',
   async login(creds){
     const res = await fetch(`${this.base}/api/auth/login`, {
       method: 'POST',
@@ -23,6 +23,48 @@ const API = {
     if(!res.ok) {
       let errText = 'Registration failed'
       try { const errBody = await res.json(); if(errBody && errBody.error) errText = errBody.error } catch(e) {}
+      throw new Error(errText)
+    }
+    return res.json()
+  }
+
+  ,async registerOtp(payload){
+    const res = await fetch(`${this.base}/api/simple/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    if(!res.ok){
+      let errText = 'Registration failed'
+      try{ const errBody = await res.json(); if(errBody && errBody.error) errText = errBody.error }catch(e){}
+      throw new Error(errText)
+    }
+    return res.json()
+  }
+
+  ,async verifyOtp(email, otp){
+    const res = await fetch(`${this.base}/api/simple/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    })
+    if(!res.ok){
+      let errText = 'OTP verification failed'
+      try{ const errBody = await res.json(); if(errBody && errBody.error) errText = errBody.error }catch(e){}
+      throw new Error(errText)
+    }
+    return res.json()
+  }
+
+  ,async resendOtp(email){
+    const res = await fetch(`${this.base}/api/simple/resend-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    })
+    if(!res.ok){
+      let errText = 'OTP resend failed'
+      try{ const errBody = await res.json(); if(errBody && errBody.error) errText = errBody.error }catch(e){}
       throw new Error(errText)
     }
     return res.json()
@@ -280,6 +322,18 @@ const API = {
       const res = await fetch(`${this.base}/api/feedback`, { headers })
       if(!res.ok) return []
       return res.json()
+    }
+
+    ,async exportGrievances(){
+      const token = localStorage.getItem('jwt')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch(`${this.base}/api/grievances/export`, { headers })
+      if(!res.ok){
+        let err = 'Export failed'
+        try{ const body = await res.json(); if(body && body.error) err = body.error }catch(e){}
+        throw new Error(err)
+      }
+      return res.blob()
     }
 }
 

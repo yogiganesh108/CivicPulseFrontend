@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import api from '../utils/api'
+import CATEGORIES from '../utils/categories'
 import ComplaintDetail from './ComplaintDetail'
 import FeedbackForm from './FeedbackForm'
 import FeedbackList from './FeedbackList'
@@ -15,7 +16,9 @@ function StatusChip({ status }){
 
 export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }){
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('water')
+  const defaultCategory = Object.keys(CATEGORIES)[0] || 'Other'
+  const [category, setCategory] = useState(defaultCategory)
+  const [subcategory, setSubcategory] = useState(CATEGORIES[defaultCategory] ? CATEGORIES[defaultCategory][0] : '')
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
   const [image, setImage] = useState(null)
@@ -66,6 +69,7 @@ export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }
       fd.append('title', title)
       fd.append('description', description)
       fd.append('category', category)
+      if(subcategory) fd.append('subcategory', subcategory)
       fd.append('location', location)
       if(image) fd.append('image', image)
       const res = await api.submitGrievance(fd)
@@ -92,12 +96,23 @@ export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }
               </div>
               <div className="form-row">
                 <label>Category</label>
-                <select value={category} onChange={e=>setCategory(e.target.value)}>
-                  <option value="water">Water</option>
-                  <option value="street-light">Street Light</option>
-                  <option value="road">Road / Pothole</option>
-                  <option value="sanitation">Sanitation</option>
-                  <option value="other">Other</option>
+                <select value={category} onChange={e=>{
+                  const val = e.target.value
+                  setCategory(val)
+                  const firstSub = CATEGORIES[val] && CATEGORIES[val].length ? CATEGORIES[val][0] : ''
+                  setSubcategory(firstSub)
+                }}>
+                  {Object.keys(CATEGORIES).map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-row">
+                <label>Subcategory</label>
+                <select value={subcategory} onChange={e=>setSubcategory(e.target.value)}>
+                  {(CATEGORIES[category]||[]).map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -150,7 +165,7 @@ export default function UserDashboard({ view = 'raise', onSubmitted = () => {} }
 
                         <div className="list-body">
                           <div className="list-title">{c.title}</div>
-                          <div className="list-meta">{c.category} • {c.priority || '—'}</div>
+                          <div className="list-meta">{c.category}{c.subcategory ? (' • ' + c.subcategory) : ''} • {c.priority || '—'}</div>
                           <div className="list-sub">{(c.description || '').length > 140 ? (c.description.slice(0, 140) + '…') : c.description}</div>
                           <div className="list-sub" style={{ marginTop: 6, color: '#64748b' }}>
                             Officer: {resolveOfficerName(c)} • Deadline: {c.deadline || '-'}
